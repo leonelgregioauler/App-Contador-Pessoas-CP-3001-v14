@@ -1,0 +1,46 @@
+{
+  "name": "com.leonelgregioauler.contadorpessoas",
+  "displayName": "Contador de Pessoas",
+  "version": "1.0.0",
+  "description": "A sample Apache Cordova application that responds to the deviceready event.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Apache Cordova Team",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "cordova-android": "12.0.0",
+    "cordova-browser": "7.0.0"
+  },
+  "cordova": {
+    "platforms": [
+      "browser",
+      "android"
+    ],
+    "plugins": {
+      "cordova-plugin-device": {},
+      "cordova-plugin-inappbrowser": {},
+      "cordova-plugin-network-information": {},
+      "cordova-plugin-dialogs": {},
+      "cordova-plugin-networkinterface": {},
+      "cordova-plugin-file": {},
+      "cordova-plugin-statusbar": {},
+      "cordova-plugin-splashscreen": {},
+      "cordova-plugin-saf-mediastore": {}
+    }
+  },
+  "devDependencies": {
+    "cordova-plugin-device": "*",
+    "cordova-plugin-dialogs": "*",
+    "cordova-plugin-file": "*",
+    "cordova-plugin-inappbrowser": "*",
+    "cordova-plugin-network-information": "*",
+    "cordova-plugin-splashscreen": "*",
+    "cordova-plugin-statusbar": "*",
+    "cordova-plugin-saf-mediastore": "*"
+  }
+}

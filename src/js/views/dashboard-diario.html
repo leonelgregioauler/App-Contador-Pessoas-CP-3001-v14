@@ -1,0 +1,174 @@
+<!--
+ Copyright (c) 2014, 2023, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+ <style>
+
+  @media (orientation: landscape) {
+    
+    .chart {
+      width: 100%;
+      height: 100%;
+    }
+  
+    .now {
+      font-weight: bold; 
+      color: rgb(65 65 235);
+    }
+  
+    .totals {
+      font-size: 25px; 
+      font-weight: bold; 
+      color: #373e44;
+    }
+  }
+  
+  @media (orientation: portrait) {
+    
+    .chart {
+      width: 100%;
+      height: 350px;
+    }
+  
+    .now {
+      font-weight: bold; 
+      color: rgb(65 65 235)
+    }
+  
+    .totals {
+      font-size: 25px; 
+      font-weight: bold; 
+      color: #373e44;
+    }
+  }
+</style>
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+      <!--
+       ** Oracle JET V14.1.0 hybrid mobile application header pattern.
+       ** Please see the Oracle JET Cookbook App Shell: Hybrid Mobile demos for
+       ** more information on how to use this pattern.
+    -->
+    <header role="banner" class="oj-hybrid-applayout-header" style="visibility: hidden">
+      <oj-module config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+  <!-- This is where your main page content will be loaded -->
+  <div class="oj-applayout-content" style="padding-top: 2px; padding-bottom: 45px;">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <div class="oj-hybrid-padding" style="padding: 5px;">
+        <div class="oj-flex" style="width: 100%;">
+          <div class="oj-flex-item oj-sm-padding-2x-horizontal" style="text-align: center; width: 100%">
+            <p class="now" :style.font-size="[[actualValue]]" style="margin: 0 0 0 0;">
+              <span>
+                <oj-bind-text value="[[total.totalActual()]]"></oj-bind-text>
+              </span>
+            </p>
+            <p style="margin: 0 0 0 0;">  
+              <span class="totals">
+                <oj-bind-text value="[[total.totalDay()]]"></oj-bind-text>
+              </span>
+            </p>
+          </div>
+        </div>
+        <oj-bind-if test="[[showSlider]]">
+          <oj-slider
+            id="sliderFontSize"
+            style="margin: 25px 0 25px 0;"
+            :style.text-align="center"
+            value="{{actualValue}}"
+            transient-value="{{transientValue}}"
+            min="[[minValue]]"
+            max="[[maxValue]]"
+            label-hint="Ajuste Fonte"
+            label-edge="inside"
+            orientation="horizontal">
+          </oj-slider>
+        </oj-bind-if>
+        
+        <div class="oj-flex-item oj-sm-padding-2x-horizontal" style="text-align: center; width: 100%">
+          <oj-bind-if test="[[showLoadingIndicator]]">
+            <oj-progress-circle
+              id="progressCircle"
+              style="margin: 25px 0 25px 0;"
+              value="{{indeterminate() === -1 ? -1 : progressValue}}">
+            </oj-progress-circle>
+            <div class="oj-sm-margin-4x-vertical"></div>
+            <oj-button 
+              id="buttonTryAgain"
+              style="margin: 0 0 150px 0;" 
+              on-oj-action="[[restartButton]]" 
+              :style.display="[[buttonDisplay]]"
+              >
+              Falha de comunicação. Tentar novamente.
+            </oj-button>
+          </oj-bind-if>
+          <oj-bind-if test="[[showRequestRegister]]">
+            <span>Cadastro da controladora não realizado. Acessar "Ajustes"</span>
+          </oj-bind-if>
+          <oj-bind-if test="[[showGraphicHour]]">
+            <oj-bind-for-each data="[[dataSourceDataHour]]">
+              <template data-oj-as="controladora">
+                <oj-chart 
+                  :id="[[$current.index + '_hour']]"
+                  class="chart"
+                  type="line" 
+                  orientation="[[orientationValue]]"
+                  data="[[controladora.data.histHour]]"
+                  stack="[[stackValue]]"
+                  stack-label="[[stackValue]]"
+                  selection-mode="single"
+                  animation-on-display="auto"
+                  animation-on-data-change="auto"
+                  hover-behavior="dim"
+                  y-axis.tick-label.rendered="on"
+                  y-axis.major-tick.rendered="on"
+                  y-axis.title="Quantidade de Pessoas"
+                  x-axis.title="Horas"
+                  style-defaults.data-label-position="[[labelPosition]]"
+                  style-defaults.line-type="[[lineTypeValue]]">
+                  <template slot='itemTemplate' data-oj-as='item'>
+                    <oj-chart-item 
+                      value='[[item.data.value]]'
+                      group-id='[[ [item.data.quarter] ]]' 
+                      series-id='[[item.data.series]]'
+                      label="[[item.data.value.toString()]]"> 
+                    </oj-chart-item>
+                  </template>
+                  <template slot="seriesTemplate" data-oj-as="series">
+                    <oj-chart-series
+                      color="[[series.id === 'Turno 2' ? colorOfficeHourMorning : colorOfficeHourAfternoon]]">
+                    </oj-chart-series>
+                  </template>
+                  <template slot="tooltipTemplate">
+                    <table class="oj-dvt-datatip-table">
+                      <tr>
+                        <td class="oj-dvt-datatip-value">
+                          Turno :
+                          <oj-bind-text value="[[$current.itemData.series]]"></oj-bind-text>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="oj-dvt-datatip-value">
+                          Hora :
+                          <oj-bind-text value="[[$current.itemData.quarter]]"></oj-bind-text>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="oj-dvt-datatip-value">
+                          Quantidade de Pessoas :
+                          <oj-bind-text value="[[$current.itemData.value]]"></oj-bind-text>
+                        </td>
+                      </tr>
+                    </table>
+                  </template>
+                </oj-chart>
+              </template>
+            </oj-bind-for-each>
+          </oj-bind-if>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

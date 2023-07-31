@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget id="com.leonelgregioauler.contadorpessoas" version="2023.0728.1" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>neo3001</name>
+    <description>
+        Aplicativo Contador de Pessoas - Comunicação com placa controladora com Arduíno
+    </description>
+    <author email="leonel.lga@gmail.com" href="https://cordova.apache.org">
+        LGA - Leonel Gregio Auler
+    </author>
+
+    <plugin name="cordova-plugin-device" spec="*" />
+    <plugin name="cordova-plugin-inappbrowser" spec="*" />
+    <plugin name="cordova-plugin-network-information" spec="*" />
+    <plugin name="cordova-plugin-dialogs" spec="*" />
+    <plugin name="cordova-plugin-networkinterface" source="npm" />
+    <plugin name="cordova-plugin-file" spec="*" />
+    <plugin name="cordova-plugin-splashscreen" spec="*"/>
+    <plugin name="cordova-plugin-statusbar" spec="*"/>
+    <plugin name="cordova-plugin-saf-mediastore" spec="*"/>
+    
+    <!-- Remover quando liberar a RELEASE -->
+    <preference name="InspectableWebview" value="true" />
+
+    <preference name="AndroidExtraFilesystems" value="files,files-external,documents,sdcard,cache,cache-external,assets,root" />
+    <preference name="AndroidInsecureFileModeEnabled" value="true" />
+
+    <content src="index.html" />
+
+    <access origin="*"/>
+
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <allow-intent href="file:*" />
+    <allow-intent href="asset:*" />
+
+    <allow-navigation href="file://*" />
+    <allow-navigation href="asset://*" />
+
+    <engine name="android" />
+    <engine name="browser" />
+
+    <platform name="android">
+        
+        <!-- <preference name="android-minSdkVersion" value="19" /> NÃO FUNCIONA -->
+        <!-- <preference name="android-minSdkVersion" value="22" /> NÃO FUNCIONA NO TABLET 5.1 -->
+        <preference name="android-minSdkVersion" value="24" />
+
+        <preference name="Fullscreen" value="true" />
+        <!-- CASO UTILIZAR O PLUGIN CORDOVA-PLUGIN-STATUSBAR - VER ARQUIVOS MERGER.XML E THEMEs.XML -->
+        <!-- C:\JET\mvvm\App-Contador-Pessoas\hybrid\platforms\android\app\build\intermediates\incremental\debug\mergeDebugResources -->
+        <!-- C:\JET\mvvm\App-Contador-Pessoas\hybrid\platforms\android\app\src\main\res\values -->
+        <!-- <preference name="StatusBarOverlaysWebView" value="true" /> -->
+        <!-- <preference name="StatusBarBackgroundColor" value="#FFFFFF" /> -->
+        <!-- <preference name="StatusBarStyle" value="lightcontent" /> -->
+
+    
+        <preference name="AndroidWindowSplashScreenAnimatedIcon" value="res/screen/android/logo-digitaq.png" />
+
+        <preference name="AndroidWindowSplashScreenAnimationDuration" value="3000"/>
+        <preference name="SplashScreenDelay" value="2000"/>
+        <preference name="AutoHideSplashScreen" value="true" />
+        <preference name="FadeSplashScreen" value="false" />
+        <preference name="FadeSplashScreenDuration" value="750"/>
+
+        <!-- <preference name="SplashMaintainAspectRatio" value="true" />
+        <preference name="SplashShowOnlyFirstTime" value="false" />
+        <preference name="SplashScreen" value="screen" />
+        <preference name="ShowSplashScreen" value="true" />
+        <preference name="ShowSplashScreenSpinner" value="false" /> -->
+
+        <icon src="res/icon/android/icon-ldpi.png" width="36" height="36"/>
+        <icon src="res/icon/android/icon-mdpi.png" width="48" height="48"/>
+        <icon src="res/icon/android/icon-hdpi.png" width="72" height="72"/>
+        <icon src="res/icon/android/icon-xhdpi.png" width="96" height="96"/>
+        <icon src="res/icon/android/icon-xxhdpi.png" width="144" height="144"/>
+        <icon src="res/icon/android/icon-xxxhdpi.png" width="192" height="192"/>
+    </platform>
+</widget>

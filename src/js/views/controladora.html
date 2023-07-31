@@ -1,0 +1,207 @@
+<!--
+ Copyright (c) 2014, 2023, Oracle and/or its affiliates.
+ Licensed under The Universal Permissive License (UPL), Version 1.0
+ as shown at https://oss.oracle.com/licenses/upl/
+ -->
+<style>
+
+  .oj-button-label {
+    color: #ffffff;
+  }
+
+  #modalDialogExcluirCadastro #okButton .oj-button-label {
+    background-color: rgb(58, 54, 50);
+  }
+
+  #modalDialogExcluirCadastro #cancelButton .oj-button-label {
+    background-color: #979899;
+  }
+
+  .ip {
+    font-size: larger;
+    font-weight: bold;
+  }
+
+  oj-form-layout {
+    max-width: 100% !important;
+  }
+
+  oj-list-view { 
+    margin-bottom: 150px;
+  }
+
+</style>
+<div class="oj-hybrid-applayout-page">
+  <div class="oj-applayout-fixed-top">
+      <!--
+       ** Oracle JET V14.1.0 hybrid mobile application header pattern.
+       ** Please see the Oracle JET Cookbook App Shell: Hybrid Mobile demos for
+       ** more information on how to use this pattern.
+    -->
+    <header role="banner" class="oj-hybrid-applayout-header" style="visibility: hidden">
+      <oj-module config="[[headerConfig]]"></oj-module>
+    </header>
+  </div>
+  <!-- This is where your main page content will be loaded -->
+  <div class="oj-applayout-content">
+    <div role="main" class="oj-hybrid-applayout-content">
+      <div class="oj-hybrid-padding">
+        <h1></h1>
+        <div>
+          <oj-form-layout max-columns="1" direction="row">
+            <oj-input-text 
+              id="descricao-controladora" 
+              value="{{controllerRegistration.descricaoControladora}}"
+              label-hint="Informe o nome da controladora"
+              on-raw-value-changed="[[handleRawValueChanged]]"
+              >
+            </oj-input-text>
+            <oj-input-text 
+              id="ip"
+              style="height: 60px;"
+              value="{{controllerRegistration.IP}}" 
+              label-hint="Informe o IP da controladora"
+              validators="[[validators]]"
+              display-options.validator-hint="display">
+            </oj-input-text>
+            <oj-button
+              id="consultar-ip-rede"
+              style="width: 50%; margin-bottom: 12px; float: left; background-color: rgb(255, 255, 255); border-radius: 5px;"
+              on-oj-action="[[consultarIPRede]]"
+              ><div style="color : black">Detectar IP</div>
+              <span slot='startIcon' class="icon-spinner9"></span>
+            </oj-button>
+            <oj-input-number 
+              id="hora-inicio-turno-1" 
+              value="{{controllerRegistration.horaInicioTurno1}}" 
+              label-hint="Informe a hora de início do 1º Turno"
+              on-raw-value-changed="[[handleRawValueChanged]]" 
+              min="0" 
+              max="23"
+              step="1">
+            </oj-input-number>
+            <oj-input-number 
+              id="hora-fim-turno-1" 
+              value="{{controllerRegistration.horaFimTurno1}}" 
+              label-hint="Informe a hora de fim do 1º Turno"
+              on-raw-value-changed="[[handleRawValueChanged]]" 
+              min="0" 
+              max="23"
+              step="1">
+            </oj-input-number>
+            <oj-input-number 
+              id="hora-inicio-turno-2" 
+              value="{{controllerRegistration.horaInicioTurno2}}" 
+              label-hint="Informe a hora de início do 2º Turno"
+              on-raw-value-changed="[[handleRawValueChanged]]" 
+              min="0" 
+              max="23"
+              step="1">
+            </oj-input-number>
+            <oj-input-number 
+              id="hora-fim-turno-2" 
+              value="{{controllerRegistration.horaFimTurno2}}" 
+              label-hint="Informe a hora de fim do 2º Turno"
+              on-raw-value-changed="[[handleRawValueChanged]]" 
+              min="0" 
+              max="23"
+              step="1">
+            </oj-input-number>
+            <div class="oj-flex oj-sm-flex-items-initial oj-sm-justify-content-flex-start">
+              <oj-switch id="show-controller"
+                         value="{{controllerRegistration.exibeDashBoard}}"
+                         label-hint="Exibir esse dispositivo">
+              </oj-switch>
+            </div>
+            <oj-button 
+              id="addButton" 
+              style="width: 40%; float: right; background-color: rgb(65 65 235); border-radius: 5px;"
+              class="oj-button-lg" 
+              on-oj-action="[[addItem]]" 
+              >
+              <span slot='startIcon' class="icon-plus"></span>
+              Adicionar
+            </oj-button>
+          </oj-form-layout>
+        </div>
+        <oj-bind-if test="[[showListView]]"> 
+          <oj-list-view 
+            id="listview"
+            style="margin: auto;"
+            selection-mode="single" 
+            data="[[dataProviderController]]"
+            selected="{{selectedItems}}"
+            on-selected-changed="[[handleSelectedChanged]]"
+            >
+            <template slot="itemTemplate" data-oj-as="item">
+              <li>
+                <oj-list-item-layout>
+                  <span class="oj-typography-body-md oj-text-color-primary">
+                    <div class="descricao-controladora">
+                      <oj-bind-text value="[[item.data.descricaoControladora]]"></oj-bind-text>
+                    </div>
+                    <div class="ip">
+                      <oj-bind-text value="[[item.data.IP]]"></oj-bind-text>
+                    </div>
+                  </span>
+                </oj-list-item-layout>
+              </li>
+            </template>
+          </oj-list-view>
+        </oj-bind-if>
+      </div>
+      <footer style="position: relative; margin-bottom: 20px; margin-top: 20px; width: 100%">
+        <oj-button 
+          id="update-button" 
+          style="width: 92%; margin: 2% 4% 2% 4%; background-color: rgb(65 65 235); border-radius: 5px;" 
+          class="oj-button-lg" 
+          on-oj-action="[[updateSelected]]" 
+          disabled="[[isTextOrSelectionEmpty]]"
+          >
+          <span slot='startIcon' class="icon-spinner9"></span>
+          Salvar
+        </oj-button>
+        <oj-dialog 
+          id="modalDialogExcluirCadastro" 
+          dialog-title="Excluir controladora ?"
+          position.at.vertical="center"
+          position.my.vertical="center"
+          >
+          <div slot="body">
+            <oj-bind-text value="[[controllerRegistration.descricaoControladora()]]"></oj-bind-text> : 
+            <oj-bind-text value="[[controllerRegistration.IP()]]"></oj-bind-text>
+          </div>
+          <div slot="footer">
+            <oj-button id="okButton" on-oj-action="[[removeSelected]]">Sim
+            </oj-button>
+            <oj-button id="cancelButton" on-oj-action="[[close]]">Não
+            </oj-button>
+          </div>
+        </oj-dialog>
+        <oj-button 
+          id="removeButton" 
+          style="width: 92%; margin: 0% 4% 2% 4%; background-color: #C80000; border-radius: 5px;" 
+          class="oj-button-lg" 
+          on-oj-action="[[open]]" 
+          disabled="[[isSelectionEmpty]]"
+          >
+          <span slot='startIcon' class="icon-bin2"></span>
+          Excluir
+        </oj-button>
+        <oj-label
+          style="text-align: center; font-size: 12px; font-weight: bold;"
+          >
+          <div class="app-version">
+            <oj-bind-text value="[[appVersion]]"></oj-bind-text>
+          </div>
+          <div class="ip-celular">
+            <oj-bind-text value="[[networkInformation.ipInformation]]"></oj-bind-text>
+          </div>
+          <div class="gateway-celular">
+            <oj-bind-text value="[[networkInformation.subnetInformation]]"></oj-bind-text>
+          </div>
+        </oj-label>
+      </footer>
+    </div>
+  </div>
+</div>
