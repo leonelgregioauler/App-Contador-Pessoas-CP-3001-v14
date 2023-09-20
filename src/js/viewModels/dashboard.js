@@ -69,7 +69,9 @@ define(['knockout', 'ojs/ojarraydataprovider'],
     self.total = {
       totalActual : ko.observable(),
       totalDay : ko.observable(),
-      dayMonthYear : ko.observable()
+      dayMonthYear : ko.observable(),
+      avgDay : ko.observable(),
+      avgMonth : ko.observable()
     }
 
     self.controllerData = {

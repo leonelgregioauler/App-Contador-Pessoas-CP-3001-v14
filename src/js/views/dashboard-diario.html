@@ -22,6 +22,12 @@
       font-weight: bold; 
       color: #373e44;
     }
+
+    .average {
+      font-size: 25px; 
+      font-weight: bold; 
+      color: rgb(65 65 235);
+    }
   }
   
   @media (orientation: portrait) {
@@ -40,6 +46,12 @@
       font-size: 25px; 
       font-weight: bold; 
       color: #373e44;
+    }
+
+    .average {
+      font-size: 25px; 
+      font-weight: bold; 
+      color: rgb(65 65 235);
     }
   }
 </style>
@@ -68,6 +80,11 @@
             <p style="margin: 0 0 0 0;">  
               <span class="totals">
                 <oj-bind-text value="[[total.totalDay()]]"></oj-bind-text>
+              </span>
+            </p>
+            <p style="margin: 0 0 0 0;">  
+              <span class="average">
+                <oj-bind-text value="[[total.avgDay()]]"></oj-bind-text>
               </span>
             </p>
           </div>
