@@ -34,7 +34,8 @@ define(['knockout', 'ojs/ojcontext', 'ojs/ojcorerouter', 'ojs/ojmodulerouter-ada
         { path: '', redirect: 'dashboard-diario' },
         { path: 'dashboard-diario', detail: { label: 'Diário', iconClass: 'oj-ux-ico-bar-chart' } },
         { path: 'dashboard-mensal', detail: { label: 'Mensal', iconClass: 'oj-ux-ico-bar-chart' } },
-        { path: 'controladora', detail: { label: 'Ajustes', iconClass: 'icon-uniE609' } }
+        { path: 'controladora', detail: { label: 'Ajustes', iconClass: 'icon-uniE609' } },
+        { path: 'chatbot', detail: { label: 'Suporte', iconClass: 'icon-phone' } }
       ];
       
       // Router setup

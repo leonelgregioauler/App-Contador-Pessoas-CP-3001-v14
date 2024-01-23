@@ -1,6 +1,5 @@
 # App-Contador-Pessoas-CP-3001
 
-
 Projeto Contador de Pessoas CP 3001
 https://digitaq.com.br
 

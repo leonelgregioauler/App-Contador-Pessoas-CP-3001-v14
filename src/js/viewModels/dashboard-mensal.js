@@ -165,6 +165,16 @@ define(['knockout',
                   value: parseInt(item.v)
                 }
               });
+
+              let totalDiasMovimento = new Array;
+              historicMonth.forEach((item) => {
+                if ( parseInt(item.v) > 0 ) {
+                  totalDiasMovimento.push(idx);
+                  return;
+                }
+              })
+
+              self.total.avgMonth(`Visitas/Dia: ${parseInt(self.total.totalDay() / (totalDiasMovimento.length))}`);
   
               self.dataSourceDataMonth[0].histMonth.data = details;
 
@@ -284,7 +294,7 @@ define(['knockout',
             return a.dia - b.dia;
           });
   
-          historicMonthList = orderDataList.slice(0, day);
+          historicMonthList = orderDataList.slice(0, 31);
 
           let totalVisitantesMes = historicMonthList.reduce( (accumulator, object) => {
             return accumulator + parseInt(object.totalVisitantesDia);
@@ -302,7 +312,7 @@ define(['knockout',
               value: parseInt(item.totalVisitantesDia)
             }
           });
-  
+
           self.dataSourceDataMonth[0].histMonth.data = detailsList;
           
           self.showGraphicMonth(false);
@@ -446,8 +456,8 @@ define(['knockout',
       };
 
       self.connected = function() {
-        accUtils.announce('Dashboard page loaded.');
-        document.title = "Dashboard";
+        accUtils.announce('Dashboard Mensal page loaded.');
+        document.title = "Dashboard Mensal";
         window.addEventListener('orientationchange', self.identifyScreenSize);
         self.queryController();
         self.createIntervalMonthly();
