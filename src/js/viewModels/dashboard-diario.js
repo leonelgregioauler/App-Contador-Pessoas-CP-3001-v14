@@ -63,7 +63,7 @@ define(['knockout',
       let historicOfficeHourAfternoon = Dash.config.historicOfficeHourAfternoon;
       self.colorOfficeHourMorning = Dash.config.colorOfficeHourMorning;
       self.colorOfficeHourAfternoon = Dash.config.colorOfficeHourAfternoon;
-      self.dataSourceDataHour = Dash.config.dataSourceDataHour;
+      self.dataSourceDataHour = Dash.config.dataSourceDataHour; 
 
       networkInformation = Dash.config.networkInformation;
       getNetworkInformation = Dash.config.getNetworkInformation;
@@ -89,6 +89,7 @@ define(['knockout',
 
           const date = new Date();
           const hour = date.getHours();
+          const minutes = date.getMinutes();
           const day = date.getDate();
           const month = date.getMonth() + 1;
           const year = date.getFullYear();
@@ -115,34 +116,56 @@ define(['knockout',
             endpointData = async () => {
               controller.dataHour().splice(-controller.dataHour().length);
 
-              (hour <= 11) ? await Promise.all([endpoint4()]) : null;
-              (hour >= 12) ? await Promise.all([endpoint4(), endpoint5()]) : null;
+              (hour <= 11) ? await Promise.all([localData(), endpoint4()]) : null;
+              (hour >= 12) ? await Promise.all([localData(), endpoint4(), endpoint5()]) : null;
             }
             
             endpointData().then( () => {
 
               let orderData = controller.dataHour().sort( (a, b) => {
-                return a.h - b.h;
+                return a.seq - b.seq;
               })
+
+              let indexInitialMorning = orderData.map(item => item.h).indexOf(itemControl.horaInicioTurno1);
+              let indexInitialAfternoon = orderData.map(item => item.h).indexOf(itemControl.horaInicioTurno2);
+              
+              let quarter = orderData.filter((item) => {
+                return item.h == hour;
+              });
+              let quarterFinalMoning = orderData.filter((item) => {
+                return item.h == itemControl.horaFimTurno1;
+              });
+              let quarterFinalAfternoon = orderData.filter((item) => {
+                return item.h == itemControl.horaFimTurno2;
+              });
+              
+              let indexHour = orderData.map(item => item.h).indexOf(hour) + quarter.length;
+              let indexFinalMorning = orderData.map(item => item.h).indexOf(itemControl.horaFimTurno1) + quarterFinalMoning.length;
+              let indexFinalAfternoon = orderData.map(item => item.h).indexOf(itemControl.horaFimTurno2) + quarterFinalAfternoon.length;
             
-              historicOfficeHourMorning   = orderData.slice(itemControl.horaInicioTurno1, (itemControl.horaFimTurno1 < hour) ? itemControl.horaFimTurno1 + 1 : hour + 1);
-              historicOfficeHourAfternoon = orderData.slice(itemControl.horaInicioTurno2, (itemControl.horaFimTurno2 < hour) ? itemControl.horaFimTurno2 + 1 : hour + 1);
+              historicOfficeHourMorning   = orderData.slice(indexInitialMorning, (itemControl.horaFimTurno1 < hour) ? indexFinalMorning : indexHour);
+              historicOfficeHourAfternoon = orderData.slice(indexInitialAfternoon, (itemControl.horaFimTurno2 < hour) ? indexFinalAfternoon : indexHour);
             
               const detailsMorning = historicOfficeHourMorning.map((item) => {
+                let hour = item.h
+                let minute = item.m.toString().padEnd(2, 0);
+
                 return {
-                  id: item.h,
+                  id: `${hour}:${minute}`,
                   series: 'Turno 1',
-                  quarter: item.h,
+                  quarter: `${hour}:${minute}`,
                   group: 'Contador',
                   value: parseInt(item.v)
                 }
               });
               
               const detailsAfternoon = historicOfficeHourAfternoon.map((item) => {
-                return {
-                  id: item.h,
+                let hour = item.h
+                let minute = item.m.toString().padEnd(2, 0);
+;                return {
+                  id: `${hour}:${minute}`,
                   series: 'Turno 2',
-                  quarter: item.h,
+                  quarter: `${hour}:${minute}`,
                   group: 'Contador',
                   value: parseInt(item.v)
                 }
@@ -150,7 +173,7 @@ define(['knockout',
               
               const detailsMorningAfternoon = [...detailsMorning, ...detailsAfternoon];
 
-              self.total.avgDay(`Visitas/Hora: ${parseInt(self.total.totalActual() / detailsMorningAfternoon.length)}`);
+              self.total.avgDay(`Visitas/Hora: ${parseInt(self.total.totalActual() / detailsMorningAfternoon.length == 0 ? 1 : detailsMorningAfternoon.length)}`);
               
               self.dataSourceDataHour[0].histHour.data = detailsMorningAfternoon;
               
@@ -169,24 +192,66 @@ define(['knockout',
             self.progressValue(Math.floor(Math.random() * 100));
             getNetworkInformation(error);
           })
+
+          localData = async () => {
+            let localData = await DataBase.queryVisitorsDayDetails(`SELECT hora, minuto, totalVisitantesHoraMinuto FROM RELATORIO_DIARIO order by hora`).then( (responseLocal) => {    
+                responseLocal.forEach( (item) => {
+                  controller.dataHour.push({
+                    seq: parseInt(`${item.h}${item.m}`),
+                    h: item.h,
+                    m: item.m,
+                    v: item.v
+                  });
+                })
+            })
+          }
           
           endpoint4 = async () => {
-            let endpoint1 = await Util.callGetService(itemControl.IP, controller.parameter12h).then( (response) => {
-              response.historico.forEach( (item) => {
-                controller.dataHour.push(item);
-              })
+            let endpoint4 = await Util.callGetService(itemControl.IP, controller.parameter12h).then( (response) => {
+                response.historico.forEach( (item) => {
+                  controller.dataHour.push({
+                    seq: parseInt(`${item.h}`) * 100,
+                    h: item.h,
+                    m: 0,
+                    v: item.v
+                  });
+
+                  let minute;
+  
+                  minutes < 15 ? minute = 0 : null;
+                  minutes >= 15 ? minute = 15 : null;
+                  minutes >= 30 ? minute = 30 : null;
+                  minutes >= 45 ? minute = 45 : null;
+  
+                  DataBase.insertUpdateVisitorsDayDetails(hour, item, minute, fullDate);                
+                })
             })
           }
           
           endpoint5 = async () => {
-            let endpoint2 = await Util.callGetService(itemControl.IP, controller.parameter24h).then( (response) => {
-              response.historico.forEach( (item) => {
-                controller.dataHour.push(item);
-              })
+            let endpoint5 = await Util.callGetService(itemControl.IP, controller.parameter24h).then( (response) => {
+                response.historico.forEach( (item) => {
+                  controller.dataHour.push({
+                    seq: parseInt(`${item.h}`) * 100,
+                    h: item.h,
+                    m: 0,
+                    v: item.v
+                  });
+
+                  let minute;
+  
+                  minutes < 15 ? minute = 0 : null;
+                  minutes >= 15 ? minute = 15 : null;
+                  minutes >= 30 ? minute = 30 : null;
+                  minutes >= 45 ? minute = 45 : null;
+  
+                  DataBase.insertUpdateVisitorsDayDetails(hour, item, minute, fullDate);
+                })
             })
           }
         })
       }
+      
 
       self.clearIntervalDaily = function () { 
         clearInterval(Dash.config.intervalDaily());
@@ -227,6 +292,7 @@ define(['knockout',
         self.queryController();
         self.createIntervalDaily();
         self.identifyScreenSize();
+        DataBase.createDataBase();
       };
 
       self.disconnected = function() {

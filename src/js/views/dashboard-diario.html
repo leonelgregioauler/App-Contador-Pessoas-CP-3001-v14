@@ -9,7 +9,7 @@
     
     .chart {
       width: 100%;
-      height: 100%;
+      height: 50vh;
     }
   
     .now {
@@ -125,7 +125,7 @@
             <span>Cadastro da controladora não realizado. Acessar "Ajustes"</span>
           </oj-bind-if>
           <oj-bind-if test="[[showGraphicHour]]">
-            <oj-bind-for-each data="[[dataSourceDataHour]]">
+            <oj-bind-for-each data="[[dataSourceDataHour]]"> 
               <template data-oj-as="controladora">
                 <oj-chart 
                   :id="[[$current.index + '_hour']]"
@@ -139,10 +139,13 @@
                   animation-on-display="auto"
                   animation-on-data-change="auto"
                   hover-behavior="dim"
+                  legend.position="bottom"
                   y-axis.tick-label.rendered="on"
                   y-axis.major-tick.rendered="on"
-                  y-axis.title="Quantidade de Pessoas"
+                  y-axis.title="Qtd. Pessoas"
                   x-axis.title="Horas"
+                  x-axis.rendered="on"
+                  x-axis.size="70px"
                   style-defaults.data-label-position="[[labelPosition]]"
                   style-defaults.line-type="[[lineTypeValue]]">
                   <template slot='itemTemplate' data-oj-as='item'>
@@ -150,7 +153,7 @@
                       value='[[item.data.value]]'
                       group-id='[[ [item.data.quarter] ]]' 
                       series-id='[[item.data.series]]'
-                      label="[[item.data.value.toString()]]"> 
+                      >
                     </oj-chart-item>
                   </template>
                   <template slot="seriesTemplate" data-oj-as="series">

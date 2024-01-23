@@ -17,6 +17,11 @@ define([],
                                                                            horaFimTurno2 INTEGER NOT NULL, 
                                                                            exibeDashBoard NUMBER)`);
   
+                  tx.executeSql(`CREATE TABLE IF NOT EXISTS RELATORIO_DIARIO (hora INTEGER,
+                                                                              minuto INTEGER,
+                                                                              totalVisitantesHoraMinuto INTEGER,
+                                                                              constraint UK_HORA_MINUTO UNIQUE (hora, minuto))`);
+
                   tx.executeSql(`CREATE TABLE IF NOT EXISTS RELATORIO_MENSAL (mes INTEGER,
                                                                               mesDescricao VARCHAR2(20), 
                                                                               totalVisitantesMes INTEGER, 
@@ -43,6 +48,7 @@ define([],
   
               db.transaction(function(tx) {
                   tx.executeSql('DROP TABLE CONTROLADORAS');
+                  tx.executeSql('DROP TABLE RELATORIO_DIARIO');
                   tx.executeSql('DROP TABLE RELATORIO_MENSAL');
                   tx.executeSql('DROP TABLE RELATORIO_MENSAL_DETALHES');
               });
@@ -143,6 +149,67 @@ define([],
           } catch (err) {
           alert ('Erro ao remover a controladora '+ err);
           }
+      }
+
+      function insertUpdateVisitorsDayDetails (hour, historicDay, minute, fullDate) {
+  
+        try {
+            db = openDatabase ('App-Contador-Pessoas', 1.0, 'App Contador de Pessoas', 2 * 1024 * 1024);
+            // Migração SQLite
+            //db = window.sqlitePlugin.openDatabase ({name: 'App-Contador-Pessoas', location: 'default'});
+            
+            const parameterDate = localStorage.getItem("DATE");
+
+            if ( (historicDay.h > 0) && (parameterDate !== fullDate) ) {
+              localStorage.setItem("DATE", fullDate);
+              db.transaction(function(tx) {
+                  tx.executeSql(`DELETE FROM RELATORIO_DIARIO`);
+              });
+            }
+            if ((hour == historicDay.h) && (minute !== 0)) {
+              db.transaction(function(tx) {
+                  tx.executeSql(`INSERT OR REPLACE INTO RELATORIO_DIARIO (hora, minuto, totalVisitantesHoraMinuto) 
+                                 VALUES (${historicDay.h}, ${minute}, ${parseInt(historicDay.v)})`);
+              });
+            }
+        } catch (err) {
+            alert ('Erro ao inserir ou atualizar o total de visitantes por hora detalhado '+ err);
+        }
+    }
+
+    function queryVisitorsDayDetails (query) {
+        var visitors = [];
+        var visitorsMap = [];
+        try {
+            db = openDatabase ('App-Contador-Pessoas', 1.0, 'App Contador de Pessoas', 2 * 1024 * 1024);
+            // Migração SQLite
+            //db = window.sqlitePlugin.openDatabase ({name: 'App-Contador-Pessoas', location: 'default'});
+
+            return new Promise( (resolve, reject) => {
+                db.transaction(function(tx) {
+                    tx.executeSql(query, [], function(tx, result) {
+                        
+                        for (let i = 0; i < result.rows.length; i++) {
+                            visitors.push(result.rows.item(i));
+                        }
+
+                        visitorsMap = visitors.map((item) => {
+                            return {
+                                d: null,
+                                h: parseInt(item.hora),
+                                m: item.minuto,
+                                v: item.totalVisitantesHoraMinuto.toString()
+                            }
+                        })
+                        
+                        resolve(visitorsMap);
+                    }, reject)
+                })
+            });
+        } catch (err) {
+          alert ('Erro ao consultar os dados mensais de visitantes ' + err);
+        }
+        return visitors;
       }
   
       function insertUpdateVisitorsMonth (month, totalVisitantesMes, year) {
@@ -252,6 +319,8 @@ define([],
                updateController: updateController,
                queryController: queryController,
                deleteController: deleteController,
+               insertUpdateVisitorsDayDetails: insertUpdateVisitorsDayDetails,
+               queryVisitorsDayDetails: queryVisitorsDayDetails,
                insertUpdateVisitorsMonth: insertUpdateVisitorsMonth,
                queryVisitorsMonth: queryVisitorsMonth,
                insertUpdateVisitorsMonthDetails: insertUpdateVisitorsMonthDetails,

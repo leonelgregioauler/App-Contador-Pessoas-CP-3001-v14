@@ -9,7 +9,7 @@
     
     .chart {
       width: 100%;
-      height: 100%;
+      height: 50vh;
     }
 
     .now {
@@ -178,8 +178,10 @@
                   legend.position="bottom"
                   y-axis.tick-label.rendered="on"
                   y-axis.major-tick.rendered="on"
-                  y-axis.title="Quantidade de Pessoas"
+                  y-axis.title="Qtd. Pessoas"
                   x-axis.title="Dias"
+                  x-axis.rendered="on"
+                  x-axis.size="70px"
                   style-defaults.data-label-position="[[labelPosition]]"
                   style-defaults.line-type="[[lineTypeValue]]">
                   <template slot='itemTemplate' data-oj-as='item'>

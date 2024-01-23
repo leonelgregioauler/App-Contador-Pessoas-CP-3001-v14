@@ -56,7 +56,7 @@ define([
       const year = date.getFullYear();
       
       //const appVersion = `Neo CP 3001 - v ${year}${month}${day}.1`;
-      const appVersion = `Neo CP 3001 - v 2023.0912.1`;
+      const appVersion = `Neo CP 3001 - v 2024.0122.1`;
       
       self.appVersion = ko.observable(appVersion);
 
