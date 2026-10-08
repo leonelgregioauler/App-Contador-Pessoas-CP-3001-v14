@@ -3,7 +3,7 @@
 Projeto Contador de Pessoas CP 3001
 https://digitaq.com.br
 
-https://play.google.com/store/apps/details?id=com.leonelgregioauler.contadorpessoas
+https://play.google.com/store/apps/details?id=com.leonelgregioauler.contadorpessoascp3001
 
 JET 14.1.2
 Cordova CLI 12.0.0

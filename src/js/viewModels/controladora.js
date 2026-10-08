@@ -56,7 +56,7 @@ define([
       const year = date.getFullYear();
       
       //const appVersion = `Neo CP 3001 - v ${year}${month}${day}.1`;
-      const appVersion = `Neo CP 3001 - v 2024.0122.1`;
+      const appVersion = `Neo CP 3001 - v 2026.1007.1`;
       
       self.appVersion = ko.observable(appVersion);
 
@@ -288,7 +288,7 @@ define([
         IP.push("10");
         IP = IP.join('.');
         const ipInfo = (ipInformation.ip) ? `\nIP : ${ipInformation.ip}` : `\nIP : ${ipInformation}`;
-        const subNet = (ipInformation.subnet) ? `\nGateway : ${ipInformation.subnet}` : `Gateway : Desconhecido.`;
+        const subNet = (ipInformation.subnet) ? `\nSub-rede : ${ipInformation.subnet}` : `Sub-rede : Desconhecido.`;
         if (ipInformation) {
           self.networkInformation.IP(IP);
           self.networkInformation.ipInformation(ipInfo);

@@ -140,7 +140,7 @@ define(['knockout', 'ojs/ojarraydataprovider'],
 
         const IP = (ipInformation.ip) ? ipInformation.ip : ipInformation;
         const ipInfo = (ipInformation.ip) ? `\nIP : ${ipInformation.ip}` : `\nIP : ${ipInformation}`;
-        const subNet = (ipInformation.subnet) ? `\nGateway : ${ipInformation.subnet}` : `Gateway : Desconhecido.`;
+        const subNet = (ipInformation.subnet) ? `\nSub-rede : ${ipInformation.subnet}` : `Sub-rede : Desconhecido.`;
 
         if (ipInformation) {
           self.networkInformation.IP(IP);
